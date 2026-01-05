@@ -1,0 +1,24 @@
+# 工作空间和临时文件
+.workspace/
+*.log
+*.tmp
+
+# 系统文件
+.DS_Store
+Thumbs.db
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# 敏感信息
+.env
+.env.local
+*.pem
+*.key
+credentials.json
+
+# 测试产物
+echo

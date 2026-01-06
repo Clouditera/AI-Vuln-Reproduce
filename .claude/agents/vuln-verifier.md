@@ -346,20 +346,17 @@ await captureScreenshot(page, '08_usage_after', '测试后使用历史(10次,超
 ### 目录结构
 ```
 .workspace/reproduced/{VULN_ID}/
-├── verdict.md          # 完整报告（必须嵌入所有截图）
-├── poc.py              # Python PoC 脚本（首选）
-├── poc.sh              # Shell PoC 脚本（备选）
-├── request.http        # HTTP 原始请求
-└── evidence/           # 截图证据
+├── verdict.md          # 复现报告 (必须)
+├── poc.py              # PoC 脚本 (必须)
+└── evidence/           # 证据截图 (必须)
     ├── 01_login_page.png
     ├── 02_login_filled.png
     ├── 03_after_login.png
     ├── 04_vuln_page.png
     ├── 05_payload_input.png
     ├── 06_after_submit.png
-    ├── 07_poc_effect.png      # 必须有此截图!
-    ├── 08_final_result.png
-    └── metadata.json          # 截图元数据
+    ├── 07_poc_effect.png      # 关键截图!
+    └── 08_final_result.png
 ```
 
 ### 检查清单

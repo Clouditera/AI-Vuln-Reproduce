@@ -316,21 +316,50 @@ await captureScreenshot(page, '08_usage_after', '测试后使用历史(10次,超
 
 ## 输出要求
 
+> **完整规范请参考**: `.claude/output-spec.md`
+
+### VULN_ID 命名格式
+
+```
+{漏洞类型}-{模块名}-{日期}
+```
+
+**漏洞类型缩写:**
+- `SXSS` - 存储型 XSS
+- `RXSS` - 反射型 XSS
+- `SQLI` - SQL 注入
+- `RACE` - 竞态条件
+- `IDOR` - 不安全的直接对象引用
+- `CSRF` - 跨站请求伪造
+- `AUTH` - 认证绕过
+- `UPLOAD` - 文件上传
+- `CMDI` - 命令注入
+- `PATH` - 路径遍历
+- `SSRF` - 服务端请求伪造
+- `PRIV` - 权限提升
+
+**示例:**
+- `SXSS-ProductAttribute-20260106`
+- `RACE-DiscountCoupon-20260106`
+- `IDOR-OrderHistory-20260106`
+
 ### 目录结构
 ```
 .workspace/reproduced/{VULN_ID}/
 ├── verdict.md          # 完整报告（必须嵌入所有截图）
-├── poc.sh / poc.py     # 可执行的 PoC 脚本
+├── poc.py              # Python PoC 脚本（首选）
+├── poc.sh              # Shell PoC 脚本（备选）
+├── request.http        # HTTP 原始请求
 └── evidence/           # 截图证据
     ├── 01_login_page.png
     ├── 02_login_filled.png
-    ├── 03_dashboard.png
+    ├── 03_after_login.png
     ├── 04_vuln_page.png
     ├── 05_payload_input.png
     ├── 06_after_submit.png
     ├── 07_poc_effect.png      # 必须有此截图!
     ├── 08_final_result.png
-    └── screenshots.json       # 截图元数据
+    └── metadata.json          # 截图元数据
 ```
 
 ### 检查清单

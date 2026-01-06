@@ -22,3 +22,6 @@ credentials.json
 
 # 测试产物
 echo
+
+# 漏洞报告（包含敏感信息）
+vulnerabilities/

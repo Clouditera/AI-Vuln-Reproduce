@@ -1,5 +1,6 @@
 # 工作空间和临时文件
 .workspace/
+node_modules/
 *.log
 *.tmp
 

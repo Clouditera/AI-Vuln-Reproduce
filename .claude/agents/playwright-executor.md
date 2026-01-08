@@ -405,54 +405,122 @@ function isRelevantRequest(request) {
 
 ---
 
-## 输出格式
+## 输出报告格式
+
+**必须遵循统一模版** (参见 `.claude/skills/report-template.md`)
+
+### 报告文件结构
+
+```markdown
+# [{漏洞状态}] {VUL-ID} {漏洞名称} - L1 Playwright复现报告
+
+---
+
+## 复现结论
+
+| 项目 | 内容 |
+|------|------|
+| **漏洞状态** | 存在 / 不存在 |
+| **危害等级** | 高 / 中 / 低 |
+| **复现方式** | L1 Playwright 浏览器自动化 |
+| **复现日期** | {日期} |
+| **目标地址** | {URL} |
+
+---
+
+## 漏洞介绍
+
+### 漏洞类型
+{类型}
+
+### 漏洞位置
+- **页面**: {页面URL}
+- **触发点**: {触发漏洞的元素/操作}
+
+### 漏洞描述
+{详细描述}
+
+---
+
+## 复现过程
+
+### 环境准备
+{前提条件、账号信息}
+
+### 复现步骤
+
+**步骤 1**: {描述}
+![步骤1截图](evidence/{VUL-ID}/screenshots/01_xxx.png)
+
+**步骤 2**: {描述}
+![步骤2截图](evidence/{VUL-ID}/screenshots/02_xxx.png)
+
+{继续添加步骤...}
+
+### 复现结果
+![PoC效果](evidence/{VUL-ID}/screenshots/XX_poc_result.png)
+
+---
+
+## 证据
+
+### 截图列表
+| 步骤 | 截图 | 说明 |
+|------|------|------|
+| 1 | 01_xxx.png | {说明} |
+| 2 | 02_xxx.png | {说明} |
+| PoC | XX_poc_result.png | 漏洞触发效果 |
+
+### HTTP 请求
+\`\`\`http
+{关键请求}
+\`\`\`
+
+### HTTP 响应
+\`\`\`http
+{关键响应}
+\`\`\`
+
+---
+
+## PoC {漏洞存在时}
+
+### Playwright 脚本
+\`\`\`javascript
+{可运行的Playwright脚本}
+\`\`\`
+
+### 快速验证
+\`\`\`bash
+{命令行验证方式}
+\`\`\`
+
+---
+
+## 复现失败分析 {漏洞不存在时}
+
+### 失败原因
+{原因说明}
+
+### 探索过程
+{如果进入了探索模式，记录探索过程}
+
+---
+
+## 修复建议 {漏洞存在时}
+
+{修复方案}
+```
+
+### 返回摘要格式 (< 300 字符)
 
 ```yaml
 status: success | failed | partial
-
-execution_log:
-  - step: 1
-    action: "访问登录页"
-    result: success
-    screenshot: "01_login_page.png"
-
-  - step: 2
-    action: "输入用户名密码"
-    result: success
-    screenshot: "02_credentials.png"
-
-  - step: 3
-    action: "点击用户管理"
-    result: failed
-    explore_mode: true
-    explore_attempts: 3
-    final_result: success
-    screenshot: "03_user_management.png"
-
-evidence:
-  screenshots:
-    - "01_login_page.png"
-    - "02_credentials.png"
-    - "03_user_management.png"
-    - "XX_poc_result.png"
-
-  http:
-    - request: |
-        POST /admin/users HTTP/1.1
-        ...
-      response: |
-        HTTP/1.1 200 OK
-        ...
-
-failure_info:  # 如果失败
-  step: 4
-  error: "找不到目标元素"
-  screenshot: "stuck_step4.png"
-  explore_log:
-    - "尝试点击: 系统管理"
-    - "尝试点击: 用户中心"
-    - "尝试点击: 设置"
-    - "探索失败: 未找到用户管理入口"
+vuln_id: "VUL-001"
+vuln_exists: true | false
+summary: "漏洞通过浏览器自动化复现成功/失败，{简要说明}"
+report: ".workspace/reproduced/xxx/individual_reports/VUL-001_xxx.md"
+screenshots: 8
 ```
 
 ---

@@ -585,49 +585,105 @@ def format_http_response(response):
 
 ---
 
-## 输出格式
+## 输出报告格式
+
+**必须遵循统一模版** (参见 `.claude/skills/report-template.md`)
+
+### 报告文件结构
+
+```markdown
+# [{漏洞状态}] {VUL-ID} {漏洞名称} - L2 API复现报告
+
+---
+
+## 复现结论
+
+| 项目 | 内容 |
+|------|------|
+| **漏洞状态** | 存在 / 不存在 |
+| **危害等级** | 高 / 中 / 低 |
+| **复现方式** | L2 API 接口测试 |
+| **复现日期** | {日期} |
+| **目标地址** | {URL} |
+
+---
+
+## 漏洞介绍
+
+### 漏洞类型
+{类型}
+
+### 漏洞位置
+- **端点**: {API路径}
+- **方法**: {HTTP方法}
+- **参数**: {受影响参数}
+
+### 漏洞描述
+{详细描述}
+
+---
+
+## 复现过程
+
+### 环境准备
+{前提条件}
+
+### 复现步骤
+{详细步骤，包含HTTP请求}
+
+### 复现结果
+{实际响应}
+
+---
+
+## 证据
+
+### HTTP 请求
+\`\`\`http
+{完整请求}
+\`\`\`
+
+### HTTP 响应
+\`\`\`http
+{完整响应}
+\`\`\`
+
+---
+
+## PoC {漏洞存在时}
+
+### 快速验证
+\`\`\`bash
+curl -X GET 'http://xxx' -H 'xxx'
+\`\`\`
+
+### 完整脚本
+\`\`\`python
+{可运行的PoC}
+\`\`\`
+
+---
+
+## 复现失败分析 {漏洞不存在时}
+
+### 失败原因
+{原因说明}
+
+---
+
+## 修复建议 {漏洞存在时}
+
+{修复方案}
+```
+
+### 返回摘要格式 (< 300 字符)
 
 ```yaml
 status: success | failed
-
-api_info:
-  endpoint: "/api/users/1"
-  method: "GET"
-  payload: {"id": "1' OR '1'='1"}
-
-evidence:
-  http:
-    request: |
-      GET /api/users/1' OR '1'='1 HTTP/1.1
-      Host: localhost:8080
-      Authorization: Bearer xxx
-    response: |
-      HTTP/1.1 200 OK
-      Content-Type: application/json
-
-      [{"id": 1, "name": "admin"}, {"id": 2, "name": "user"}]
-
-  screenshot: "evidence/VUL-001/screenshots/api_result.png"  # 如果成功
-
-verification:
-  type: "sqli"
-  result: "union_based"
-  indicators:
-    - "返回了多条数据"
-    - "可以访问所有用户信息"
-
-poc:
-  quick: |
-    curl -X GET 'http://localhost:8080/api/users/1%27%20OR%20%271%27=%271' \
-      -H 'Authorization: Bearer xxx'
-  script: |
-    import requests
-    ...
-
-failure_info:  # 如果失败
-  reason: "API 返回 403 Forbidden"
-  response_code: 403
-  response_body: "Access denied"
+vuln_id: "VUL-002"
+vuln_exists: true | false
+summary: "漏洞确认存在/不存在，简要说明"
+report: ".workspace/reproduced/xxx/individual_reports/VUL-002_xxx.md"
 ```
 
 ---

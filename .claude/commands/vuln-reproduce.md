@@ -14,6 +14,40 @@ argument-hint: @<漏洞报告.md> <环境地址|docker-compose.yml> [代码路�
 - **以漏洞报告为准**：漏洞类型、复现方法均从报告提取
 - **智能选择复现模式**：根据漏洞特征自动选择最佳验证方式
 - **每个漏洞独立报告**：完整步骤 + 证据 + PoC
+- **上下文节约**：详细内容写文件，只返回摘要
+- **支持恢复**：中断后可继续未完成的漏洞
+- **批次执行**：每批最多 3 个漏洞并行
+
+---
+
+## 上下文管理（关键）
+
+### 输出约束
+
+```yaml
+子 Agent 返回格式（必须 < 300 字符）:
+  status: success | failed
+  vuln_id: "VUL-001"
+  summary: "XSS 漏洞复现成功"
+  report: ".workspace/.../report.md"
+
+禁止返回:
+  - 完整报告内容
+  - HTTP 请求/响应
+  - 代码片段
+```
+
+### 恢复机制
+
+检查 `state.json` 跳过已完成：
+
+```bash
+# 继续上次任务
+/vuln-reproduce --resume
+
+# 重新开始
+/vuln-reproduce @report.md http://target
+```
 
 ---
 
@@ -167,14 +201,17 @@ AI 分析漏洞报告后，如果发现缺失关键信息，会主动询问用�
 
 ## 执行流程
 
-### STEP 1: 解析漏洞报告
+### STEP 1: 检查恢复点
 
-从报告提取每个漏洞的：
-- ID、名称、类型、等级
-- 漏洞位置、攻击端点
-- **复现步骤**
-- 预期效果
-- **判断适用的复现模式**
+```python
+state_file = ".workspace/reproduced/{project}/state.json"
+if exists(state_file):
+    # 恢复模式：跳过已完成的漏洞
+    pending_vulns = load_pending_from_state()
+else:
+    # 新任务：解析漏洞报告
+    pending_vulns = parse_vuln_report()
+```
 
 ### STEP 2: 环境检测
 
@@ -186,14 +223,32 @@ curl -s -o /dev/null -w "%{http_code}" {BASE_URL}
 
 检查是否缺失关键信息，缺失则询问用户。
 
-### STEP 4: 逐个复现
+### STEP 4: 批次执行（关键优化）
 
-对每个漏洞：
-1. **选择模式**：根据漏洞特征选择 L1/L2/L3
-2. **执行复现**：按选定模式执行
-3. **失败降级**：当前模式失败时尝试下一模式
-4. **收集证据**：截图 + HTTP 记录
-5. **生成报告**：独立报告 + PoC 脚本
+```yaml
+批次大小: 3
+执行策略:
+  1. 将漏洞分成批次
+  2. 每批最多 3 个漏洞并行执行
+  3. 等待当前批次全部完成
+  4. 更新 state.json
+  5. 执行下一批次
+```
+
+```
+批次 1: [VUL-001, VUL-002, VUL-003] → 并行执行
+        ↓ 等待完成，更新状态
+批次 2: [VUL-004, VUL-005, VUL-006] → 并行执行
+        ↓ 等待完成，更新状态
+批次 N: ...
+```
+
+**每个子 Agent 完成后只返回摘要**：
+```
+✓ VUL-001: CONFIRMED (L1) → report.md
+✓ VUL-002: CONFIRMED (L2) → report.md
+✗ VUL-003: NOT_REPRODUCED → report.md
+```
 
 ### STEP 5: 生成汇总
 

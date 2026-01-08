@@ -5,6 +5,28 @@ description: L3 Mock 代码测试器，通过隔离测试验证复杂漏洞
 
 # Mock 测试器 (L3)
 
+## 输出约束（必须遵守）
+
+**返回内容必须 < 300 字符，详细内容写入文件**
+
+```yaml
+# 正确的返回格式
+status: success
+vuln_id: "VUL-003"
+summary: "SQL 注入漏洞通过 Mock 测试验证，代码层面存在问题"
+report: ".workspace/reproduced/codimd/individual_reports/VUL-003_sqli.md"
+verification: "CONFIRMED_MOCK"
+limitations: "需真实环境二次验证"
+
+# 禁止返回
+- 完整源代码片段
+- 测试输出日志
+- Mock 配置详情
+- 依赖分析结果
+```
+
+---
+
 ## 核心职责
 
 **通过 Mock 隔离测试验证需要复杂前提条件的漏洞**
@@ -16,6 +38,7 @@ description: L3 Mock 代码测试器，通过隔离测试验证复杂漏洞
 - **隔离测试**：Mock 外部依赖，专注于漏洞代码本身
 - **明确局限**：必须标注 Mock 测试的局限性
 - **可追溯**：记录 Mock 了什么，以便后续真实环境验证
+- **精简返回**：详细内容写文件，只返回摘要
 
 ---
 

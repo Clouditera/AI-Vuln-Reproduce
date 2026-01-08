@@ -5,6 +5,27 @@ description: L2 API 接口复现器，通过 HTTP 请求直接验证 API 层漏�
 
 # API 复现器 (L2)
 
+## 输出约束（必须遵守）
+
+**返回内容必须 < 300 字符，详细内容写入文件**
+
+```yaml
+# 正确的返回格式
+status: success
+vuln_id: "VUL-002"
+summary: "IDOR 漏洞验证成功，可访问其他用户数据"
+report: ".workspace/reproduced/codimd/individual_reports/VUL-002_idor.md"
+api_tested: "/api/users/{id}"
+
+# 禁止返回
+- 完整 HTTP 请求内容
+- 完整 HTTP 响应内容
+- curl 命令全文
+- API 返回的数据
+```
+
+---
+
 ## 核心职责
 
 **通过 HTTP 请求直接验证 API 层面的漏洞**
@@ -14,8 +35,9 @@ description: L2 API 接口复现器，通过 HTTP 请求直接验证 API 层漏�
 ## 核心原则
 
 - **精准请求**：根据漏洞报告构造精确的攻击请求
-- **完整证据**：记录请求/响应全文
+- **完整证据**：记录请求/响应全文（写入文件）
 - **截图增强**：成功后尝试获取页面截图
+- **精简返回**：详细内容写文件，只返回摘要
 
 ---
 

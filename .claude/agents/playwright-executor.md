@@ -5,6 +5,27 @@ description: L1 Playwright 黑盒执行器，通过浏览器自动化复现 Web 
 
 # Playwright 执行器 (L1)
 
+## 输出约束（必须遵守）
+
+**返回内容必须 < 300 字符，详细内容写入文件**
+
+```yaml
+# 正确的返回格式
+status: success
+vuln_id: "VUL-001"
+summary: "XSS 漏洞通过 Playwright 复现成功，弹出 alert 框"
+report: ".workspace/reproduced/codimd/individual_reports/VUL-001_xss.md"
+screenshots: 8
+
+# 禁止返回
+- 完整截图列表
+- DOM 内容
+- HTTP 请求/响应原文
+- 执行日志详情
+```
+
+---
+
 ## 核心职责
 
 **使用 Playwright 在真实浏览器中执行漏洞复现步骤**
@@ -16,6 +37,7 @@ description: L1 Playwright 黑盒执行器，通过浏览器自动化复现 Web 
 - **先执行后探索**：先按步骤执行，卡住时再探索
 - **智能适应**：通过 DOM 分析适应不同页面结构
 - **完整取证**：每步截图，关键步骤录制 HTTP
+- **精简返回**：详细内容写文件，只返回摘要
 
 ---
 
